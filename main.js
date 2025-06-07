@@ -25,7 +25,7 @@ const game = new Phaser.Game(config);
 function preload() {
     this.load.image('background', 'assets/background.png');
     this.load.image('player', 'assets/player_full_team.png');
-    this.load.image('cpu', 'assets/sprites_player2_dogs_obstacles.png');
+    this.load.image('cpu', 'assets/player_full_team.png');  // temporary CPU sprite
 }
 
 function create() {
@@ -68,7 +68,7 @@ function update() {
     }
 
     // CPU AUTO-MOVE UP
-    cpu.setVelocityY(-100);
+    cpu.setVelocity(0, -100);
 
     // Reset CPU to bottom if off screen
     if (cpu.y < -50) {
