@@ -29,10 +29,11 @@ function preload() {
     this.load.image('background', 'assets/background.png');
     this.load.image('player', 'assets/player_full_team.png');
     this.load.image('cpu', 'assets/player_full_team.png');
-    this.load.image('dog1', 'assets/sprites_player_dogs_obstacles.png');
-    this.load.image('dog2', 'assets/sprites_player2_dogs_obstacles.png');
-    this.load.image('dog3', 'assets/sprites_player3_dogs_extra.png');
+    this.load.image('dog1', 'assets/dog1.png');  // ✅ corrected
+    this.load.image('dog2', 'assets/dog2.png');  // ✅ corrected
+    this.load.image('dog3', 'assets/dog3.png');  // ✅ corrected
 }
+
 
 function create() {
     this.add.image(400, 300, 'background').setScale(1);
