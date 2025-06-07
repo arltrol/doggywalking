@@ -1,3 +1,4 @@
+
 const config = {
     type: Phaser.AUTO,
     width: 800,
@@ -19,33 +20,38 @@ const config = {
 let player;
 let cpu;
 let cursors;
+let playerDogs = [];
+let cpuDogs = [];
 
 const game = new Phaser.Game(config);
 
 function preload() {
     this.load.image('background', 'assets/background.png');
     this.load.image('player', 'assets/player_full_team.png');
-    this.load.image('cpu', 'assets/player_full_team.png'); // same for now
+    this.load.image('cpu', 'assets/player_full_team.png');
+    this.load.image('dog1', 'assets/sprites_player_dogs_obstacles.png');
+    this.load.image('dog2', 'assets/sprites_player2_dogs_obstacles.png');
+    this.load.image('dog3', 'assets/sprites_player3_dogs_extra.png');
 }
 
 function create() {
     this.add.image(400, 300, 'background').setScale(1);
 
-    // Player setup
-    player = this.physics.add.sprite(200, 500, 'player');
-    player.setScale(0.3);
-    player.setCollideWorldBounds(true);
+    player = this.physics.add.sprite(200, 500, 'player').setScale(0.3).setCollideWorldBounds(true);
+    cpu = this.physics.add.sprite(600, 700, 'cpu').setScale(0.3).setOrigin(0.5, 1);
 
-    // CPU setup — anchor to bottom center for proper reset
-    cpu = this.physics.add.sprite(600, 700, 'cpu'); // start a bit lower
-    cpu.setScale(0.3);
-    cpu.setCollideWorldBounds(false);
-    cpu.setOrigin(0.5, 1);  // Bottom center
-
-    // Input
     cursors = this.input.keyboard.createCursorKeys();
 
-    // Title
+    // Add dogs that follow the player
+    playerDogs.push(this.physics.add.sprite(200, 550, 'dog1').setScale(0.15));
+    playerDogs.push(this.physics.add.sprite(200, 600, 'dog2').setScale(0.15));
+    playerDogs.push(this.physics.add.sprite(200, 650, 'dog3').setScale(0.15));
+
+    // Add dogs that follow the CPU
+    cpuDogs.push(this.physics.add.sprite(600, 750, 'dog1').setScale(0.15));
+    cpuDogs.push(this.physics.add.sprite(600, 800, 'dog2').setScale(0.15));
+    cpuDogs.push(this.physics.add.sprite(600, 850, 'dog3').setScale(0.15));
+
     this.add.text(20, 20, 'Lea The Best', {
         fontSize: '28px',
         fill: '#222',
@@ -66,10 +72,23 @@ function update() {
         player.setVelocityY(150);
     }
 
+    // CPU movement
     cpu.setVelocity(0, -100);
-
-    // Reset based on true position with origin taken into account
     if (cpu.y < -100) {
         cpu.y = 700;
+    }
+
+    // Dogs follow player
+    let lead = player;
+    for (let i = 0; i < playerDogs.length; i++) {
+        this.physics.moveToObject(playerDogs[i], lead, 100);
+        lead = playerDogs[i];
+    }
+
+    // Dogs follow CPU
+    lead = cpu;
+    for (let i = 0; i < cpuDogs.length; i++) {
+        this.physics.moveToObject(cpuDogs[i], lead, 100);
+        lead = cpuDogs[i];
     }
 }
