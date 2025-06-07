@@ -14,7 +14,7 @@ const config = {
 const game = new Phaser.Game(config);
 
 function preload() {
-    this.load.image('background', 'A_2D_digital_illustration_features_a_winding_dirt_.png');
+    this.load.image('background', 'assets/background.png');
 }
 
 function create() {
