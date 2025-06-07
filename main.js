@@ -39,3 +39,39 @@ function create() {
 
     // Add CPU walker (right track)
     cpu = this.physics.add.sprite(600, 500, 'cpu');
+    cpu.setScale(0.3);
+    cpu.setCollideWorldBounds(true);
+
+    // Setup keyboard input
+    cursors = this.input.keyboard.createCursorKeys();
+
+    // Game title
+    this.add.text(20, 20, 'Lea The Best', {
+        fontSize: '28px',
+        fill: '#222',
+        fontFamily: 'Arial'
+    });
+}
+
+function update() {
+    // PLAYER MOVEMENT
+    player.setVelocity(0);
+    if (cursors.left.isDown) {
+        player.setVelocityX(-150);
+    } else if (cursors.right.isDown) {
+        player.setVelocityX(150);
+    }
+    if (cursors.up.isDown) {
+        player.setVelocityY(-150);
+    } else if (cursors.down.isDown) {
+        player.setVelocityY(150);
+    }
+
+    // CPU AUTO-MOVE UP
+    cpu.setVelocityY(-100);
+
+    // Reset CPU to bottom if off screen
+    if (cpu.y < -50) {
+        cpu.y = 650;
+    }
+}
