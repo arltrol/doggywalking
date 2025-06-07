@@ -1,4 +1,3 @@
-
 const config = {
     type: Phaser.AUTO,
     width: 800,
@@ -29,11 +28,10 @@ function preload() {
     this.load.image('background', 'assets/background.png');
     this.load.image('player', 'assets/player_full_team.png');
     this.load.image('cpu', 'assets/player_full_team.png');
-    this.load.image('dog1', 'assets/dog1.png');  // ✅ corrected
-    this.load.image('dog2', 'assets/dog2.png');  // ✅ corrected
-    this.load.image('dog3', 'assets/dog3.png');  // ✅ corrected
+    this.load.image('dog1', 'assets/dog1.png');
+    this.load.image('dog2', 'assets/dog2.png');
+    this.load.image('dog3', 'assets/dog3.png');
 }
-
 
 function create() {
     this.add.image(400, 300, 'background').setScale(1);
@@ -43,15 +41,15 @@ function create() {
 
     cursors = this.input.keyboard.createCursorKeys();
 
-    // Add dogs that follow the player
-    playerDogs.push(this.physics.add.sprite(200, 550, 'dog1').setScale(0.15));
-    playerDogs.push(this.physics.add.sprite(200, 600, 'dog2').setScale(0.15));
-    playerDogs.push(this.physics.add.sprite(200, 650, 'dog3').setScale(0.15));
+    // Add player dogs (scaled down, centered bottom)
+    playerDogs.push(this.physics.add.sprite(200, 550, 'dog1').setScale(0.15).setOrigin(0.5, 1));
+    playerDogs.push(this.physics.add.sprite(200, 600, 'dog2').setScale(0.15).setOrigin(0.5, 1));
+    playerDogs.push(this.physics.add.sprite(200, 650, 'dog3').setScale(0.15).setOrigin(0.5, 1));
 
-    // Add dogs that follow the CPU
-    cpuDogs.push(this.physics.add.sprite(600, 750, 'dog1').setScale(0.15));
-    cpuDogs.push(this.physics.add.sprite(600, 800, 'dog2').setScale(0.15));
-    cpuDogs.push(this.physics.add.sprite(600, 850, 'dog3').setScale(0.15));
+    // Add CPU dogs
+    cpuDogs.push(this.physics.add.sprite(600, 750, 'dog1').setScale(0.15).setOrigin(0.5, 1));
+    cpuDogs.push(this.physics.add.sprite(600, 800, 'dog2').setScale(0.15).setOrigin(0.5, 1));
+    cpuDogs.push(this.physics.add.sprite(600, 850, 'dog3').setScale(0.15).setOrigin(0.5, 1));
 
     this.add.text(20, 20, 'Lea The Best', {
         fontSize: '28px',
@@ -61,6 +59,7 @@ function create() {
 }
 
 function update() {
+    // Player movement
     player.setVelocity(0);
     if (cursors.left.isDown) {
         player.setVelocityX(-150);
@@ -75,21 +74,24 @@ function update() {
 
     // CPU movement
     cpu.setVelocity(0, -100);
-    if (cpu.y < -100) {
-        cpu.y = 700;
-    }
+    if (cpu.y < -100) cpu.y = 700;
 
-    // Dogs follow player
-    let lead = player;
-    for (let i = 0; i < playerDogs.length; i++) {
-        this.physics.moveToObject(playerDogs[i], lead, 100);
-        lead = playerDogs[i];
-    }
+    // Dog trailing effect (with delay)
+    followChain(this, player, playerDogs, 60);
+    followChain(this, cpu, cpuDogs, 60);
+}
 
-    // Dogs follow CPU
-    lead = cpu;
-    for (let i = 0; i < cpuDogs.length; i++) {
-        this.physics.moveToObject(cpuDogs[i], lead, 100);
-        lead = cpuDogs[i];
+function followChain(scene, leader, followers, spacing) {
+    let target = leader;
+    for (let i = 0; i < followers.length; i++) {
+        scene.physics.moveToObject(followers[i], target, 100);
+        const dist = Phaser.Math.Distance.Between(
+            followers[i].x, followers[i].y,
+            target.x, target.y
+        );
+        if (dist < spacing) {
+            followers[i].body.reset(target.x, target.y);
+        }
+        target = followers[i];
     }
 }
